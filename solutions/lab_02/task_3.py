@@ -1,4 +1,4 @@
-"""import sys
+import sys
 
 data = [1, 2, 3]
 print("После создания:", sys.getrefcount(data)) #прогноз - 1, но получаем 2
@@ -14,11 +14,11 @@ print("После del alias:", sys.getrefcount(data)) #прогноз - 2, но 
 
 container.clear()
 print("После очистки контейнера:", sys.getrefcount(data)) #прогноз - 1, но получаем 2
-"""
 
 
 
-'''import weakref
+
+import weakref
 
 
 class Record:
@@ -30,7 +30,7 @@ weak_record = weakref.ref(record)
 
 print(weak_record())
 del record
-print(weak_record())'''
+print(weak_record())
 
 
 import weakref
