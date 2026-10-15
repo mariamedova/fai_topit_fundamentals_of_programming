@@ -1,6 +1,6 @@
 import gc
 
-'''first = []
+first = []
 second = []
 
 first.append(second)
@@ -67,7 +67,7 @@ print("Автосборщик снова включён. gc.isenabled() =", gc.i
 print("Финальные пороги:", gc.get_threshold())
 print()
 print()
-print()'''
+print()
 
 # Перед созданием графа получаем статистику сборщика мусора
 before_stats = gc.get_count()  # (gen0, gen1, gen2) — количество объектов в каждом поколении
