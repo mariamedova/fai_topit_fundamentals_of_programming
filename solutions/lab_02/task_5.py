@@ -1,6 +1,6 @@
 import sys
 import tracemalloc
-'''
+
 print("-----ЧАСТЬ 1: Размер отдельных объектов-----")
 
 empty_list = []
@@ -33,7 +33,7 @@ for i in range(100):
 # Финальное состояние
 print(f"Финальная длина: {len(lst)}, финальный размер списка: {sys.getsizeof(lst)} байт")
 print()
-'''
+
 
 print("-----ЧАСТЬ 3: Сравнение range и list(range(...)) через tracemalloc-----")
 
