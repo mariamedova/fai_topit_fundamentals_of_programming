@@ -186,39 +186,52 @@ total         = sum(x*x for x in range(1_000_000))   # generator expression
 ```mermaid
 classDiagram
     direction LR
+
     class Submission {
+        <<dataclass>>
         +str student_id
         +str laboratory_id
         +int attempt
         +float score
         +str comment
-        +__post_init__()
+        +__post_init__() None
     }
+
     class Student {
-        +str id
-        +str name
-        +tuple~Submission~ submissions
-        +float average_score
-        +add_submission(Submission)
-        +best_score(lab_id) float
-        +sorted_submissions() list
-        +from_full_name(id, full_name)$
-        +is_valid_id(id)$
-        +__len__()
-        +__iter__()
-        +__str__()
-        +__repr__()
+        -str _id
+        -str _name
+        -list~Submission~ _submissions
+        -Pattern _ID_RE
+        +__init__(student_id, name) None
+        +id str
+        +name str
+        +submissions tuple~Submission~
+        +average_score float
+        +add_submission(Submission) None
+        +best_score(laboratory_id) float
+        +sorted_submissions() list~Submission~
+        +from_full_name(student_id, full_name)$ Student
+        +is_valid_id(student_id)$ bool
+        +__len__() int
+        +__iter__() Iterator~Submission~
+        +__str__() str
+        +__repr__() str
     }
+
     class Course {
-        +str name
-        +add_student(Student)
-        +get_student(id) Student
-        +submit(Submission)
-        +top_students(limit) list
-        +__len__()
-        +__iter__()
-        +__contains__(id)
+        -str _name
+        -dict~str, Student~ _students
+        +__init__(name) None
+        +add_student(Student) None
+        +get_student(student_id) Student
+        +submit(Submission) None
+        +top_students(limit) list~Student~
+        +__contains__(student_id) bool
+        +__len__() int
+        +__iter__() Iterator~Student~
+        +__repr__() str
     }
+
     Course "1" o-- "*" Student : composition
     Student "1" o-- "*" Submission : composition
 ```
@@ -266,51 +279,85 @@ for s in student:    # итерация по работам
 
 ```mermaid
 classDiagram
+    direction LR
+
     class CourseEvent {
         <<abstract>>
-        +str student_id
-        +datetime created_at
+        -str _student_id
+        -datetime _created_at
+        +__init__(student_id, created_at) None
+        +student_id str
+        +created_at datetime
         +describe()* str
+        +__repr__() str
     }
+
     class SubmissionEvent {
-        +str laboratory_id
-        +int attempt
-        +float score
-        +describe()
+        -str _laboratory_id
+        -int _attempt
+        -float _score
+        +__init__(student_id, laboratory_id, attempt, score, created_at) None
+        +laboratory_id str
+        +attempt int
+        +score float
+        +describe() str
     }
+
     class AttendanceEvent {
-        +str lesson
-        +bool present
-        +describe()
+        -str _lesson
+        -bool _present
+        +__init__(student_id, lesson, present, created_at) None
+        +describe() str
     }
+
     class CommentEvent {
-        +str text
-        +describe()
+        -str _text
+        +__init__(student_id, text, created_at) None
+        +describe() str
     }
+
     class DeadlineEvent {
-        +str laboratory_id
-        +datetime deadline
-        +describe()
+        -str _laboratory_id
+        -datetime _deadline
+        +__init__(student_id, laboratory_id, deadline, created_at) None
+        +describe() str
     }
+
     class CourseJournal {
-        +add(event)
-        +events_for_student(id)
-        +events_by_type(type)
+        -list~CourseEvent~ _events
+        +__init__() None
+        +add(CourseEvent) None
+        +events_for_student(student_id) Iterator~CourseEvent~
+        +events_by_type(event_type) Iterator~CourseEvent~
         +summary() dict
-        +__len__()
-        +__iter__()
-        +__getitem__(key)
+        +__len__() int
+        +__iter__() Iterator~CourseEvent~
+        +__getitem__(key) CourseEvent
+        +__str__() str
+        +__repr__() str
     }
-    class ScoreView { +__iter__() }
-    class FilteredJournalView { +__iter__() }
+
+    class ScoreView {
+        -CourseJournal _journal
+        +__init__(journal) None
+        +__iter__() Iterator~float~
+    }
+
+    class FilteredJournalView {
+        -CourseJournal _journal
+        -Callable _predicate
+        +__init__(journal, predicate) None
+        +__iter__() Iterator~CourseEvent~
+        +__len__() int
+    }
 
     CourseEvent <|-- SubmissionEvent
     CourseEvent <|-- AttendanceEvent
     CourseEvent <|-- CommentEvent
     CourseEvent <|-- DeadlineEvent
-    CourseJournal o-- CourseEvent
-    ScoreView ..> CourseJournal
-    FilteredJournalView ..> CourseJournal
+    CourseJournal "1" o-- "*" CourseEvent : composition
+    ScoreView o-- CourseJournal : aggregation
+    FilteredJournalView o-- CourseJournal : aggregation
 ```
 
 ### 5.2. `CourseJournal`
