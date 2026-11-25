@@ -264,7 +264,7 @@ for s in student:    # итерация по работам
 `CourseEvent` — `ABC`: свойства `student_id`, `created_at`, абстрактный `describe()`.  
 Наследники: `SubmissionEvent`, `AttendanceEvent`, `CommentEvent`, `DeadlineEvent` (добавлен позже — **без изменения** `render_timeline`).
 
-```python
+```mermaid
 classDiagram
     class CourseEvent {
         <<abstract>>
